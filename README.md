@@ -1,21 +1,28 @@
 # chinese-chess
 
-> A Vue.js project
+> 中国象棋
 
-## Build Setup
+## 介绍
 
 ``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
+目前仅支持双人对战，且无规则，后续有时间会加入规则和人机对战
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## 预览
+
+https://kodywang1994.github.io/chinese-chess/dist/index.html
+
+## Task List
+
+- 增加规则
+- 增加人机对战
+- 增加下一步建议
+- ...
+
+## 更多游戏
+
+https://kodywang1994.github.io/game-box/dist/index.html
+
+https://github.com/kodyWang1994/game-box
+
+https://github.com/kodyWang1994/game-box-mp
