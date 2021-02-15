@@ -73,7 +73,7 @@ export default {
       window.location.href = 'https://kodywang1994.github.io/game-box/dist/index.html#/'
     },
     gameOver (camp) {
-      this.camp = camp
+      this.winCamp = camp
       this.over = true
     },
     clickPiece (piece) {
