@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="status" :class="nextCamp > 0 ? 'red': ''">{{nextCamp > 0 ? '红旗' : '黑棋'}}</div>
+    <div class="status" :class="nextCamp > 0 ? 'red': ''">{{nextCamp > 0 ? '红棋' : '黑棋'}}</div>
 
     <div class="board">
       <div class="board-wrap">
