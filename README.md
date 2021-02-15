@@ -10,7 +10,7 @@
 
 ## 预览
 
-`目前仅支持手机模式` https://kodywang1994.github.io/chinese-chess/dist/index.html
+https://kodywang1994.github.io/chinese-chess/dist/index.html
 
 ## Task List
 
