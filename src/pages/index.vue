@@ -1,8 +1,11 @@
 <template>
   <div>
+    <div class="status" :class="nextCamp > 0 ? 'red': ''">{{nextCamp > 0 ? '红旗' : '黑棋'}}</div>
+
     <div class="board">
       <div class="board-wrap">
         <div class="piece blank-item"
+          :class="handleHighLight(item)"
           :style="handlePosition(item.position)"
           @click="clickPiece(item)"
           v-for="(item, index) in blankMap"
@@ -11,7 +14,7 @@
         </div>
 
         <div class="piece"
-          :class="'black-' + item.name + (needMovePiece && needMovePiece.camp == -1 && needMovePiece.name == item.name ? ' active' : '')"
+          :class="['black-' + item.name, handleHighLight(item)]"
           :style="handlePosition(item.position)"
           @click="clickPiece(item)"
           v-for="item in blackPieces"
@@ -19,7 +22,7 @@
         </div>
 
         <div class="piece"
-          :class="'red-' + item.name + (needMovePiece && needMovePiece.camp == 1 && needMovePiece.name == item.name ? ' active' : '')"
+          :class="['red-' + item.name, handleHighLight(item)]"
           :style="handlePosition(item.position)"
           @click="clickPiece(item)"
           v-for="item in redPieces"
@@ -27,44 +30,79 @@
         </div>
       </div>
     </div>
+
+    <div v-if="over" class="success-panel">
+      <div class="success-title">{{winCamp > 0 ? '红棋' : '黑棋'}}赢了！</div>
+      <div class="restart" @click="begin">再来一局</div>
+      <div class="restart back" @click="moreGame">更多游戏</div>
+    </div>
   </div>
 </template>
 
 <script>
 import Game from '../game'
-// import Rule from '../game/rule'
+import Rule from '../game/rule'
 
 export default {
   data () {
     return {
+      nextCamp: 1,
+      winCamp: 0,
+      over: false,
       blankMap: [],
       redPieces: [],
       blackPieces: [],
-      needMovePiece: null
+      needMovePiece: null,
+      highLightPoint: [] // 可移动的点，需要高亮
     }
   },
   created () {
-    const gameData = Game.initGame()
-    this.blackPieces = gameData.blackPieces
-    this.redPieces = gameData.redPieces
-    this.blankMap = gameData.blankMap
+    this.begin()
   },
   methods: {
+    begin () {
+      this.nextCamp = this.winCamp ? -this.winCamp : 1
+      this.winCamp = 0
+      this.over = false
+      Game.initGame()
+      this.blankMap = Game.getBlankMap()
+      this.blackPieces = Game.getBlackPieces()
+      this.redPieces = Game.getRedPieces()
+    },
+    moreGame () {
+      window.location.href = 'https://kodywang1994.github.io/game-box/dist/index.html#/'
+    },
+    gameOver (camp) {
+      this.camp = camp
+      this.over = true
+    },
     clickPiece (piece) {
-      if (this.needMovePiece) {
+      if (this.needMovePiece && this.needMovePiece.camp !== piece.camp) {
         this.moveToAnim(this.needMovePiece, piece)
         this.needMovePiece = null
-      } else if (piece.camp) {
+        this.highLightPoint = []
+      } else if (piece.camp && piece.camp === this.nextCamp) {
         this.needMovePiece = piece
+        this.highLightPoint = Rule.getMoveLine(this.needMovePiece)
+        console.log(this.highLightPoint)
       }
     },
     moveToAnim (needMovePiece, targetPiece) {
-      if (targetPiece.camp && targetPiece.camp !== needMovePiece.camp) {
-        this.removePiece(targetPiece)
+      if (Rule.canMove(needMovePiece, targetPiece, this.highLightPoint)) {
+        if (targetPiece.camp && targetPiece.camp !== needMovePiece.camp) {
+          this.removePiece(targetPiece)
+        }
+        needMovePiece.moveTo(targetPiece.position)
+        this.nextCamp = -this.nextCamp
+        // 清除状态
+        this.needMovePiece = null
+        this.highLightPoint = []
       }
-      needMovePiece.moveTo(targetPiece.position)
     },
     removePiece (piece) {
+      if (piece.name === 'k') {
+        this.gameOver(-piece.camp)
+      }
       if (piece.camp === 1) {
         const index = this.getPieceIndexByName(this.redPieces, piece)
         this.redPieces.splice(index, 1)
@@ -81,18 +119,51 @@ export default {
       }
     },
     handlePosition (position) {
-      let pieceSize = 0.67
-      let y = position[0]
-      let x = position[1]
+      let pieceSize = 0.68
+      let x = position[0]
+      let y = position[1]
       x = (x - 1) * pieceSize - (pieceSize / 2)
       y = (y - 1) * pieceSize - (pieceSize / 2)
       return 'left:' + x + 'rem;bottom:' + y + 'rem;'
+    },
+    handleHighLight (piece) {
+      const positionStr = piece.position.toString()
+      for (const point of this.highLightPoint) {
+        if (point.toString() === positionStr) {
+          if (this.needMovePiece && piece.camp === this.needMovePiece.camp) {
+            console.log()
+            this.removeHighLightItem(piece)
+            return ''
+          } else {
+            return 'active'
+          }
+        }
+      }
+    },
+    removeHighLightItem (piece) {
+      const strArr = []
+      for (const point of this.highLightPoint) {
+        strArr.push(point.toString())
+      }
+      const index = strArr.indexOf(piece.position.toString())
+      if (index > -1) {
+        this.highLightPoint.splice(index, 1)
+      }
     }
   }
 }
 </script>
 
 <style scoped>
+.status {
+  font-size: 0.4rem;
+  font-weight: 600;
+  text-align: center;
+  padding-top: 0.2rem;
+}
+.status.red {
+  color: #b82a2a;
+}
 .board {
   position: absolute;
   top: 50%;
@@ -117,10 +188,11 @@ export default {
 
 .piece {
   position: absolute;
-  width: 0.67rem;
-  height: 0.67rem;
+  width: 0.68rem;
+  height: 0.68rem;
   background-position: center;
   background-size: 100% 100%;
+  transition: all 0.3s;
 }
 
 .blank-item {
@@ -213,5 +285,39 @@ export default {
 .active {
   background-color: rgba(59, 187, 209, 0.5);
   border-radius: 100%;
+}
+.success-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, .5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.success-title {
+  font-size: 30px;
+  font-weight: 600;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 10px;
+}
+.restart {
+  margin: 20px auto 0;
+  width: 120px;
+  height: 40px;
+  color: #fff;
+  font-size: 20px;
+  border-radius: 20px;
+  background-color: #891e91;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
