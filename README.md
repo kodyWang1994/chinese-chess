@@ -15,8 +15,8 @@ https://kodywang1994.github.io/chinese-chess/dist/index.html
 ## Task List
 
 - ~~增加规则~~
-- 增加悔棋
-- 增加人机对战
+- ~~增加悔棋~~
+- 增加人机对战(开发中)
 - 增加下一步建议
 - ...
 

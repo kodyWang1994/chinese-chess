@@ -12,4 +12,8 @@ Piece.prototype.moveTo = function (newPos) {
   this.position = newPos
 }
 
+Piece.prototype.copy = function () {
+  return new Piece(this.name, this.position, this.camp)
+}
+
 export default Piece

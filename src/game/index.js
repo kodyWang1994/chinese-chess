@@ -31,6 +31,18 @@ class Game {
     return [...this.redPieces, ...this.blackPieces]
   }
 
+  // 获取位置上的棋子
+  getPosition (position) {
+    const allPieces = this.getAllPieces()
+    const piece = allPieces.find(piece => {
+      return piece.position.toString() == position.toString()
+    })
+    if (piece) return piece
+    return this.getBlankMap().find(piece => {
+      return piece.position.toString() == position.toString()
+    })
+  }
+
   initBlankMap = function () {
     const map = []
 

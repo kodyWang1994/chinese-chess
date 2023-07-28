@@ -1,6 +1,12 @@
 <template>
   <div>
-    <div class="status" :class="nextCamp > 0 ? 'red': ''">{{nextCamp > 0 ? '红棋' : '黑棋'}}</div>
+    <div class="status" :class="nextCamp > 0 ? 'red': ''">
+      {{nextCamp > 0 ? '红棋' : '黑棋'}}
+      <div class="options">
+        <div @click="backStep">悔棋</div>
+        <div @click="robot">人机</div>
+      </div>
+    </div>
 
     <div class="board">
       <div class="board-wrap">
@@ -42,6 +48,7 @@
 <script>
 import Game from '../game'
 import Rule from '../game/rule'
+import { getBestMovePiece } from '../game/robot'
 
 export default {
   data () {
@@ -53,7 +60,8 @@ export default {
       redPieces: [],
       blackPieces: [],
       needMovePiece: null,
-      highLightPoint: [] // 可移动的点，需要高亮
+      highLightPoint: [], // 可移动的点，需要高亮
+      movedPointList: []
     }
   },
   created () {
@@ -76,6 +84,28 @@ export default {
       this.winCamp = camp
       this.over = true
     },
+    robot () {
+      const robotMovePiece = getBestMovePiece(this.nextCamp)
+      if (!robotMovePiece) return console.warn('人机计算失败')
+      this.highLightPoint = robotMovePiece.canMovePositions
+      this.moveToAnim(robotMovePiece.needMovePiece, robotMovePiece.targetPiece)
+    },
+    backStep () {
+      const step = this.movedPointList.pop() || null
+      if (!step) return
+      this.removePiece(step.movedPiece)
+      this.addPiece(step.beforeMovePiece)
+      this.addPiece(step.removedPiece)
+      this.nextCamp = -this.nextCamp
+    },
+    addPiece (piece) {
+      if (!piece) return
+      if (piece.camp === 1) {
+        this.redPieces.push(piece)
+      } else {
+        this.blackPieces.push(piece)
+      }
+    },
     clickPiece (piece) {
       if (this.needMovePiece && this.needMovePiece.camp !== piece.camp) {
         this.moveToAnim(this.needMovePiece, piece)
@@ -89,14 +119,23 @@ export default {
     },
     moveToAnim (needMovePiece, targetPiece) {
       if (Rule.canMove(needMovePiece, targetPiece, this.highLightPoint)) {
+        let removedPiece = null // 被删除的棋子，悔棋时需要还原
+        let beforeMovePiece = needMovePiece.copy() // 移动前的棋子
         if (targetPiece.camp && targetPiece.camp !== needMovePiece.camp) {
+          removedPiece = targetPiece
           this.removePiece(targetPiece)
         }
         needMovePiece.moveTo(targetPiece.position)
+        let movedPiece = needMovePiece.copy() // 移动后的棋子
         this.nextCamp = -this.nextCamp
         // 清除状态
         this.needMovePiece = null
         this.highLightPoint = []
+        this.movedPointList.push({
+          beforeMovePiece,
+          movedPiece,
+          removedPiece
+        })
       }
     },
     removePiece (piece) {
@@ -131,7 +170,6 @@ export default {
       for (const point of this.highLightPoint) {
         if (point.toString() === positionStr) {
           if (this.needMovePiece && piece.camp === this.needMovePiece.camp) {
-            console.log()
             this.removeHighLightItem(piece)
             return ''
           } else {
@@ -156,6 +194,7 @@ export default {
 
 <style scoped>
 .status {
+  position: relative;
   font-size: 0.4rem;
   font-weight: 600;
   text-align: center;
@@ -163,6 +202,16 @@ export default {
 }
 .status.red {
   color: #b82a2a;
+}
+.options {
+  position: absolute;
+  top: 0.2rem;
+  right: 0.2rem;
+  width: 20%;
+  color: green;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .board {
   position: absolute;
