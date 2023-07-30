@@ -10,7 +10,6 @@ import _ from 'underscore'
 // k // 帅
 
 const getRuleTypeByName = function (name) {
-  console.log('getRuleTypeByName', name)
   if (name.length > 1) {
     return name.substring(0, 1)
   } else {
@@ -20,7 +19,6 @@ const getRuleTypeByName = function (name) {
 
 const getMoveLine = function (piece) {
   const ruleType = getRuleTypeByName(piece.name)
-  console.log(piece, ruleType)
   let moveLine = []
   switch (ruleType) {
     case 'z': // 兵
@@ -49,7 +47,6 @@ const getMoveLine = function (piece) {
 }
 
 const canMove = function (piece, targetPiece, canMovePoint) {
-  console.log(piece, targetPiece, canMovePoint)
   if (!canMovePoint || canMovePoint.length < 1) {
     // 如果还没有可移动的列表，则return
     return false
@@ -252,15 +249,15 @@ const getJMoveLine = function (piece) {
 
   // 获取所有棋子的位置
   const positionStrArr = getAllPiecePosition()
-  const piecesArr = Game.getAllPieces()
+  // const piecesArr = Game.getAllPieces()
 
   if (x !== 9) {
     for (let xIndex = x + 1; xIndex <= 9; xIndex++) {
       const positionIndex = positionStrArr.indexOf([xIndex, y].toString())
       if (positionIndex > -1) {
-        if (piecesArr[positionIndex].camp !== piece.camp) {
-          line.push([xIndex, y])
-        }
+        // if (piecesArr[positionIndex].camp !== piece.camp) {
+        line.push([xIndex, y])
+        // }
         break
       }
       line.push([xIndex, y])
@@ -270,9 +267,9 @@ const getJMoveLine = function (piece) {
     for (let xIndex = x - 1; xIndex >= 1; xIndex--) {
       const positionIndex = positionStrArr.indexOf([xIndex, y].toString())
       if (positionIndex > -1) {
-        if (piecesArr[positionIndex].camp !== piece.camp) {
-          line.push([xIndex, y])
-        }
+        // if (piecesArr[positionIndex].camp !== piece.camp) {
+        line.push([xIndex, y])
+        // }
         break
       }
       line.push([xIndex, y])
@@ -282,9 +279,9 @@ const getJMoveLine = function (piece) {
     for (let yIndex = y + 1; yIndex <= 10; yIndex++) {
       const positionIndex = positionStrArr.indexOf([x, yIndex].toString())
       if (positionIndex > -1) {
-        if (piecesArr[positionIndex].camp !== piece.camp) {
-          line.push([x, yIndex])
-        }
+        // if (piecesArr[positionIndex].camp !== piece.camp) {
+        line.push([x, yIndex])
+        // }
         break
       }
       line.push([x, yIndex])
@@ -294,9 +291,9 @@ const getJMoveLine = function (piece) {
     for (let yIndex = y - 1; yIndex >= 1; yIndex--) {
       const positionIndex = positionStrArr.indexOf([x, yIndex].toString())
       if (positionIndex > -1) {
-        if (piecesArr[positionIndex].camp !== piece.camp) {
-          line.push([x, yIndex])
-        }
+        // if (piecesArr[positionIndex].camp !== piece.camp) {
+        line.push([x, yIndex])
+        // }
         break
       }
       line.push([x, yIndex])
@@ -351,7 +348,7 @@ const getMMoveLine = function (piece) {
       line.push([x + 2, y - 1])
     }
   }
-  if (y !== 9) {
+  if (y !== 10) {
     if (x > 2 && positionStrArr.indexOf([x - 1, y].toString()) < 0) {
       line.push([x - 2, y + 1])
     }
@@ -372,7 +369,7 @@ const getPMoveLine = function (piece) {
 
   // 获取所有棋子的位置
   const positionStrArr = getAllPiecePosition()
-  const piecesArr = Game.getAllPieces()
+  // const piecesArr = Game.getAllPieces()
 
   if (x !== 9) {
     let hasFulcrum = false // 是否有支点
@@ -380,9 +377,9 @@ const getPMoveLine = function (piece) {
       const positionIndex = positionStrArr.indexOf([xIndex, y].toString())
       if (hasFulcrum) {
         if (positionIndex > -1) {
-          if (piecesArr[positionIndex].camp !== piece.camp) {
-            line.push([xIndex, y])
-          }
+          // if (piecesArr[positionIndex].camp !== piece.camp) {
+          line.push([xIndex, y])
+          // }
           break
         }
       } else {
@@ -400,9 +397,9 @@ const getPMoveLine = function (piece) {
       const positionIndex = positionStrArr.indexOf([xIndex, y].toString())
       if (hasFulcrum) {
         if (positionIndex > -1) {
-          if (piecesArr[positionIndex].camp !== piece.camp) {
-            line.push([xIndex, y])
-          }
+          // if (piecesArr[positionIndex].camp !== piece.camp) {
+          line.push([xIndex, y])
+          // }
           break
         }
       } else {
@@ -420,9 +417,9 @@ const getPMoveLine = function (piece) {
       const positionIndex = positionStrArr.indexOf([x, yIndex].toString())
       if (hasFulcrum) {
         if (positionIndex > -1) {
-          if (piecesArr[positionIndex].camp !== piece.camp) {
-            line.push([x, yIndex])
-          }
+          // if (piecesArr[positionIndex].camp !== piece.camp) {
+          line.push([x, yIndex])
+          // }
           break
         }
       } else {
@@ -440,9 +437,9 @@ const getPMoveLine = function (piece) {
       const positionIndex = positionStrArr.indexOf([x, yIndex].toString())
       if (hasFulcrum) {
         if (positionIndex > -1) {
-          if (piecesArr[positionIndex].camp !== piece.camp) {
-            line.push([x, yIndex])
-          }
+          // if (piecesArr[positionIndex].camp !== piece.camp) {
+          line.push([x, yIndex])
+          // }
           break
         }
       } else {
@@ -465,7 +462,6 @@ const getAllPiecePosition = function () {
   for (const position of positionArr) {
     strArr.push(position.toString())
   }
-  console.log(strArr)
   return strArr
 }
 

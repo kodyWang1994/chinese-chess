@@ -114,7 +114,6 @@ export default {
       } else if (piece.camp && piece.camp === this.nextCamp) {
         this.needMovePiece = piece
         this.highLightPoint = Rule.getMoveLine(this.needMovePiece)
-        console.log(this.highLightPoint)
       }
     },
     moveToAnim (needMovePiece, targetPiece) {

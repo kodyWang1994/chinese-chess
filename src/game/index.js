@@ -32,14 +32,14 @@ class Game {
   }
 
   // 获取位置上的棋子
-  getPosition (position) {
+  getPieceByPosition (position) {
     const allPieces = this.getAllPieces()
     const piece = allPieces.find(piece => {
-      return piece.position.toString() == position.toString()
+      return piece.position.toString() === position.toString()
     })
     if (piece) return piece
     return this.getBlankMap().find(piece => {
-      return piece.position.toString() == position.toString()
+      return piece.position.toString() === position.toString()
     })
   }
 
